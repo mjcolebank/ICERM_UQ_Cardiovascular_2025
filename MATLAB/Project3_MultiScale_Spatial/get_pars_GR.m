@@ -13,20 +13,14 @@ function [IC,pars] = get_pars_GR %make variable input in future versions
 T = 1.0;
 
 %% Get the average heart rate
-
 SV = 90;
 HR = 60;
 CO_microl_min = SV*HR;
 CO_ml = CO_microl_min/60;
-
-
-
-
 Vtot = 5000;
 %% Define conversion factors
 p_conv = 0.133322;% mmHg -> Kpa
 
-%Cardiac output: assume 5 L/min
 %% First, CV model parameters
 % Most are from Boron and Boulapep, Tables 19-3 (vascular) and 22-3 (heart)
 
@@ -87,30 +81,27 @@ Vsw = Vsw_tot.*1.0;
 
 %% Next, define TriSeg parameters
 
-Am_ref_LA = 25;%0.15;%Am_rat*Am_ref(1);
-Am_ref_LV = 80;%Am_rat*Am_ref(2);
-Am_ref_RA = 25;%0.15;%Am_rat*Am_ref(3);
-Am_ref_RV = 100;%Am_rat*Am_ref(4);
-Am_ref_SW = 35;%Am_rat*Am_ref(5);
+Am_ref_LA = 25;
+Am_ref_LV = 80;
+Am_ref_RA = 25;
+Am_ref_RV = 100;
+Am_ref_SW = 35;
 
-Vwall_scale = 1.0;
 
-V_LAwall = 1.*7.5.*Vwall_scale;%*ML2L;%7.5*ML2L;%10*ML2L;   % mL = cm^3
-V_LVwall = 95.*Vwall_scale;%*ML2L;%75*ML2L;   % mL = cm^3
-V_RAwall = 1.*3.5.*Vwall_scale;%*ML2L;% 3*ML2L;   % mL = cm^3
-V_RVwall = 27.*Vwall_scale;%*ML2L;%30*ML2L;   % mL = cm^3
-V_SWwall = 24.*Vwall_scale;%*ML2L;%31*ML2L;%40*ML2L;   % mL = cm^3
+V_LAwall = 7.5;  % mL = cm^3
+V_LVwall = 95;   % mL = cm^3
+V_RAwall = 3.5;  % mL = cm^3
+V_RVwall = 27;   % mL = cm^3
+V_SWwall = 24;   % mL = cm^3
 
 % Olsen
 V0heart = (Vla+Vlv+Vra+Vrv).*1.0;
-
-
 %% Parameters for the sarcomere model
 
-% % Atria
+% Atria
 Ls_ref  = 2.0;              % micrometer
 Ls_iso  = 0.04;             % micrometer
-vmax    = 12;%24;               % micrometer per second
+vmax    = 12;               % micrometer per second
 Lsc0    = 1.51;             % micrometer
 C_rest  = 0.02;             % dimensionless
 tauR    = 0.03;         % seconds
@@ -153,10 +144,10 @@ s = 10;%5.0; %Jezek
 Peri = [V0heart; s];
 
 %% Nominal resistance values
-Ra_val = (p_lv_sys - p_sa_sys)./CO_ml;   %0.5.*p_conv/CO_ml;% KPa s / muL, Aortic Valve Resistance
-Rm_val = (p_la_sys - p_lv_dias)./CO_ml;  %0.5.*p_conv/CO_ml;% KPa s / muL, Mitral Valve Resistance
-Rp_val = (p_rv_sys - p_pa_sys)./CO_ml;   %0.5.*p_conv/CO_ml;% KPa s / muL, Pulmonic Valve Resistance
-Rt_val = (p_ra_sys - p_rv_dias)./CO_ml;  %0.5.*p_conv/CO_ml;% KPa s / muL, Tricuspid Valve Resistance
+Ra_val = 0.5.*p_conv/CO_ml;% KPa s / muL, Aortic Valve Resistance
+Rm_val = 1.5.*p_conv/CO_ml;% KPa s / muL, Mitral Valve Resistance
+Rp_val = 0.5.*p_conv/CO_ml;% KPa s / muL, Pulmonic Valve Resistance
+Rt_val = 1.5.*p_conv/CO_ml;% KPa s / muL, Tricuspid Valve Resistance
 Rvc    = (p_sv_mean - p_ra_dias)./CO_ml; % KPa s / muL, Vena Cava Resistance
 Rpv    = (p_pv_mean - p_la_dias)./CO_ml; % KPa s / muL, Pulmonary venous Resistance
 Rs     = (p_sa_sys-p_sys_cap)./CO_ml;   % KPa s / muL, Systemic vascular Resistance
@@ -166,8 +157,6 @@ Csv    = Vsv./p_sv_mean;                 % muL / KPa, Systemic venous Compliance
 Cpa    = Vpa./p_pa_sys;                  % muL / KPa, Pulmonary artery Compliance
 Cpv    = Vpv./p_pv_mean;                 % muL / KPa, Pulmonary venous Compliance
 
-Csa = SV./(p_sa_sys-p_sys_cap);
-Cpa = SV./(p_pa_sys-p_pul_cap);
 % Set parameter values
 Vpars = [V_LAwall; V_LVwall; V_RAwall; V_RVwall; V_SWwall; ...
     Am_ref_LA; Am_ref_LV; Am_ref_RA; Am_ref_RV; Am_ref_SW];

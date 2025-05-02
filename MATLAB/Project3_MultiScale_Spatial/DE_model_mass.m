@@ -74,12 +74,6 @@ c          = [clv,crv,csw];
 L          = [Llv,Lrv,Lsw];
 Vwall_ven  = Vwall([2 4 5])';
 Am_ref_ven = Am_ref([2 4 5])';
-%% Second iteration: recalculate
-%% Now that we have the values of Am and Cm, we want to calculate the
-%  mechanics of the curved cardiac walls
-% [xm,Am,Cm] = get_wallsegment(Vm,ym);
-% [Tm,G_f,c,L,eps_f] = solve_wall(t,Vwall_ven,Am,Cm,Am_ref_ven,c,L,pars,0);
-% [Tx,Ty] = get_subtensions(Tm,xm,ym);
 
 %% Now that we have the values of Am and Cm, we want to calculate the
 %  mechanics of the curved cardiac walls
@@ -104,8 +98,8 @@ c     = [c_LV c_RV c_S];
 p_trans_LV = 2.*(Tx(1)./ym);
 p_trans_RV = 2.*(Tx(2)./ym);
 
-plv = -p_trans_LV;%.*0.133322;
-prv =  p_trans_RV;%.*0.133322;
+plv = -p_trans_LV;
+prv =  p_trans_RV;\
 
 
 %% Now calculate variables in the atria

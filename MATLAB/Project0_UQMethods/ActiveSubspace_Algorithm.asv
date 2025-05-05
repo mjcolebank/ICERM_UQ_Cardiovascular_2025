@@ -1,4 +1,4 @@
-% ActiveSubspace_Algorithm.m
+% ACtiveSubspace_Algorithm.m
 % Author: Mitchel J. Colebank
 % Script for ICERM 2025 workshop on UQ in Math Bio
 % Date created: 5/5/2025
@@ -7,13 +7,11 @@
 % Outputs:
 % C_f: pxp matrix representing the average outer product of the gradient
 % with respect to the parameters
-% D: the eigenvalues of C_f
-% W: the eigenvectors of C_f
-% act_scores: the activity scores of the model parameters, corresponding to
-% the parameter influence and model sensitivity
+% D: the eigen v
 function [C_f,D,W,act_scores] = ActiveSubspace_Algorithm(f,UB,LB,M,CS_flag,param_ids,param_base,parallel_flag)
 % %% Construct active subspace representation
-
+% UB = 1.25.*param_star;
+% LB = 0.75.*param_star;
 ids_fix = 1:length(UB);
 ids_fix(param_ids) = [];
 
@@ -95,13 +93,7 @@ act_scores = sum(diag(D)*W'.^2);
 
 end
 
-%% NOTE: to build active subspace, you can transform the parameter 
-% dimensionality to an r<p subspace given by
-% act_subspace = W(:,1:r)'*theta
-% where theta is the original parameters.
-
-
-
+%% Now build active subspace
 % r = 1;
 % n_train = 500;
 % act_subspace = @(theta) W(:,1:r)'*theta;

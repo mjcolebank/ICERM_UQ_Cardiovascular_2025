@@ -1,6 +1,17 @@
-% Metropolis_Algorithm
-
-function [chain,s2chain] = AdaptiveMetropolis_s2update(f,data,prior_F,theta0,k0,M,covar,UB,LB)
+% AdaptiveMetropolis.m
+% Author: Mitchel J. Colebank
+% Script for ICERM 2025 workshop on UQ in Math Bio
+% Date created: 5/5/2025
+%
+% Solves a Bayesian inverse problem using the adaptive Metropolis
+% algorithm, a form of Markov chain monte carlo methods
+%
+% Outputs:
+% chain: the markov chains samples from the parameter posterior
+% distribution
+% s2chain: the error variance (measurement error) samples from an inverse
+% gamma distribution
+function [chain,s2chain] = AdaptiveMetropolis(f,data,prior_F,theta0,k0,M,covar,UB,LB)
 
 n_par = length(theta0);
 chain = zeros(n_par,M);

@@ -5,16 +5,10 @@
 %
 % Uses the trajectory algorithm to identify Morris' indices
 %%
-function [] = DGSM(f,UB,LB,M,parameter_names)
+function [] = DGSM(f,UB,LB,M,paramet)
 p = length(UB);
 delta = 1e-6;  % Step Size
 d = zeros(M,p); % Store the elementary effects
-if isempty(parameter_names)
-    parameter_names = cell(p,1);
-    for i=1:p
-        parameter_names{i} = strcat('Param - ',num2str(i));
-    end
-end
 %% 
 F_storage = zeros(p+1,M);
 mean_value = 0;

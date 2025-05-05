@@ -1,0 +1,32 @@
+# 
+# 
+# Copyright (C) 2018 Mette S. Olufsen.
+# All Rights Reserved.
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software") for research and
+# development purposes subject to the following conditions:
+# 
+# The above copyright notice and the README.txt file shall be included in all copies of 
+# any portion of this data.
+# 
+# Whenever reasonable and possible in publications and presentations when this data is 
+# used in whole or part, please include an acknowledgement similar to the following:
+# 
+# "This material is based upon work supported by the National Science
+# Foundation Graduate Research Fellowship under Grant No. DGE-2137100. Data was taken 
+# from Taylor-LaPole et al. 2022 and approved by the Baylor College of # Medicine 
+# Institutional Review Board (H-46224: “Four-Dimensional Flow Cardiovascular Magnetic 
+# Resonance for the Assessment of Aortic Arch Properties in Single Ventricle Patients”)"
+# 
+# Explicit written permission should be obtained from M. S. Olufsen prior to posting or 
+# distributing any portion of this software. Please email msolufse@ncsu.edu to obtain
+# written permission.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# 

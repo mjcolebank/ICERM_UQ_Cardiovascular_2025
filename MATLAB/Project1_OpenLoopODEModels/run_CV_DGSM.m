@@ -20,29 +20,38 @@ tspace = tstart:dt:tend;
 param_base = param;
 load CV_test_data.mat data
 %% Run active subspaces depending on the quantity of interest
-f = @(q) Morris_f(q,IC,tspace,1,[]);
-% f = @(q) Morris_f(q,IC,tspace,4,data); % For last QoI, use cost function
+% f = @(q) DGSM_f(q,IC,tspace,1,[]);
+f = @(q) DGSM_f(q,IC,tspace,4,data); % For last QoI, use cost function
 
-param_ids = 1:3%1:11; % Exclude the cardiac cycle length;
+param_ids = 1:11; % Exclude the cardiac cycle length;
 UB = param.*1.5;
 LB = param.*0.5;
 M = 10;
-[mu,mu_star,sigma] = Morris_Screening_Algorithm(f,UB,LB,M,param_ids,param_base);
+CS_flag = 1; % Use complex step, otherwise use centered finite difference
+parallel_flag=0;
+[mu,mu_star,v] = DGSM(f,UB,LB,M,param_ids,param_base,parallel_flag,CS_flag);
+%%
+% You can log scale v and mu_star if only a few parameters dominate
+v = log(v); mu_star = log(mu_star);
 %%
 figure(1);clf;hold on;
 for i=1:length(param_ids)
-    plot(mu_star(i),sigma(i),'k.','MarkerSize',20)
-    text(mu_star(i).*1.01,sigma(i),param_names{i},'FontSize',16,'Interpreter','latex');
+    plot(mu_star(i),v(i),'k.','MarkerSize',20)
+    text(mu_star(i).*1.1,v(i),param_names{i},'FontSize',16,'Interpreter','latex');
 end
+set(gca,'FontSize',20);
+grid on;
 
-rank = sqrt(mu_star.^2 + sigma.^2);
-figure(2); clf;
-bar(rank);
+figure(2);clf;
+bar(v);
+xticks(1:length(param_ids));
 xticklabels(param_names);
+set(gca,'FontSize',20);
+grid on;
 %%
 
 %%
-function out = Morris_f(q,IC,tspace,outflag,data)
+function out = DGSM_f(q,IC,tspace,outflag,data)
 param = q;
 [output,~] = call_CV_model(IC,param,tspace);
 
@@ -60,3 +69,5 @@ elseif outflag==4 %residual function (assume pressure in the Aorta, aortic and m
 end
 
 end
+
+

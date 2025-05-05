@@ -18,31 +18,34 @@ tend   = 30.*T; % 30 cycles
 dt = 1e-3;
 tspace = tstart:dt:tend;
 param_base = param;
-load CV_test_data.mat data
 %% Run active subspaces depending on the quantity of interest
-f = @(q) Morris_f(q,IC,tspace,1,[]);
-% f = @(q) Morris_f(q,IC,tspace,4,data); % For last QoI, use cost function
-
-param_ids = 1:3%1:11; % Exclude the cardiac cycle length;
+f = @(q) DGSM_f(q,IC,tspace,1,[]);
+param_ids = 1:11; % Exclude the cardiac cycle length;
 UB = param.*1.5;
 LB = param.*0.5;
-M = 10;
+M = 100;
+CS_flag = 1; % Use complex step, otherwise use centered finite difference
+parallel_flag=1;
+[mu,mu_star,v] = DGSM(f,UB,LB,M,parameter_names,)
 [mu,mu_star,sigma] = Morris_Screening_Algorithm(f,UB,LB,M,param_ids,param_base);
 %%
-figure(1);clf;hold on;
-for i=1:length(param_ids)
-    plot(mu_star(i),sigma(i),'k.','MarkerSize',20)
-    text(mu_star(i).*1.01,sigma(i),param_names{i},'FontSize',16,'Interpreter','latex');
+%%
+figure;clf;hold on;
+for i=1:num_par
+    plot(mu_star(i),v(i),'k.','MarkerSize',20)
+    text(mu_star(i)+20,v(i),parameter_names{i},'FontSize',16,'Interpreter','latex');
 end
 
-rank = sqrt(mu_star.^2 + sigma.^2);
-figure(2); clf;
-bar(rank);
-xticklabels(param_names);
+
+figure;
+bar(v);
+xticklabels(parameter_names);
+set(gca,'FontSize',20);
+grid on;
 %%
 
 %%
-function out = Morris_f(q,IC,tspace,outflag,data)
+function out = DGSM_f(q,IC,tspace,outflag,data)
 param = q;
 [output,~] = call_CV_model(IC,param,tspace);
 
@@ -56,7 +59,9 @@ elseif outflag==4 %residual function (assume pressure in the Aorta, aortic and m
     res1 = (data.pao - output.pao)./max(data.pao);
     res2 = (data.qav - output.qav)./max(data.qav);
     res3 = (data.qmv - output.qmv)./max(data.qmv);
-    out = sum([res1 res2 res3].^2);
+    out = sum([res1 res1 res3].^2);
 end
 
 end
+
+

@@ -22,7 +22,9 @@ if isempty(covar)
     covar = eye(n_par).*0.1.*(abs(theta0));
 end
 
-ss_func = @(param,data) sum((f(param)-data).^2);
+% ss_func = @(param,data) sum((f(param)-data).^2);
+ss_func = @(param,data) f(param); % Use this if your already returning the sum of squared error
+
 lik_func = @(ss,s2) exp( -ss./(2.*s2) ).* (2.*pi.*s2).^(-n_y/2);
 
 chain(:,1) = theta0;

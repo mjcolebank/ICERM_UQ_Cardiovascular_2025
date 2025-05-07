@@ -9,7 +9,7 @@
 % mu_star: the average absolute value of the derivative QoI w.r.t. parameters
 % v: the average squared deriative of QoI w.r.t. the parameters
 %%
-function [mu,mu_star,v] = DGSM(f,UB,LB,M,param_ids,param_base,parallel_flag,CS_flag);
+function [mu,mu_star,v] = DGSM(f,UB,LB,M,param_ids,param_base,parallel_flag,CS_flag)
 %%
 ids_fix = 1:length(UB);
 ids_fix(param_ids) = [];

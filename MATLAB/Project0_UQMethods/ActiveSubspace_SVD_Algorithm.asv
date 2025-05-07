@@ -1,17 +1,18 @@
-% ACtiveSubspace_Algorithm.m
+% ActiveSubspace_SVD_Algorithm.m
 % Author: Mitchel J. Colebank
 % Script for ICERM 2025 workshop on UQ in Math Bio
 % Date created: 5/5/2025
 %
 % Uses active subspace methods (see Constantine  ISBN 978-1-611973-85-3)
 % Outputs:
-% C_f: pxp matrix representing the average outer product of the gradient
-% with respect to the parameters
-% D: the eigen v
-function [C_f,D,W,act_scores] = ActiveSubspace_Algorithm(f,UB,LB,M,CS_flag,param_ids,param_base,parallel_flag)
+% G_f: Mxp matrix representing the scaled gradient with respect to the parameters
+% Lambda: the singular values of G_f
+% W: the rotation matrix of G_f
+% act_scores: the activity scores of the model parameters, corresponding to
+% the parameter influence and model sensitivity
+function [G_f,Lambda,W,act_scores] = ActiveSubspace_SVD_Algorithm(f,UB,LB,M,Ny,CS_flag,param_ids,param_base,parallel_flag)
 % %% Construct active subspace representation
-% UB = 1.25.*param_star;
-% LB = 0.75.*param_star;
+
 ids_fix = 1:length(UB);
 ids_fix(param_ids) = [];
 
@@ -27,8 +28,8 @@ par_LHS(param_ids,:) = LB+(UB-LB).*X';
 par_LHS(ids_fix,:) = ones(length(ids_fix),M).*param_base(ids_fix)';
 
 par_LHS = par_LHS';
-grad_f = zeros(num_param,1);
-C_f = zeros(num_param,num_param);
+grad_f = zeros(num_param,Ny);
+G_f = zeros(num_param,M);
 
 %% No Parallel
 if parallel_flag==0
@@ -41,7 +42,7 @@ if parallel_flag==0
                 fstepM = f(par_LHS(i,:)-I_h(id,:));
                 grad_f(j,:) =  0.5.*(fstepP-fstepM)./h;
             end
-            C_f = C_f+grad_f*grad_f';
+            G_f(:,i) = grad_f;
         end
     else % Use complex step
         I_h = eye(length(param_ids)+length(ids_fix)).*h.*1i;
@@ -83,17 +84,21 @@ else
         end
     end
 end
-C_f = C_f./M;
+G_f = G_f./sqrt(M);
 
 
-[~,D,W] = eig(C_f,'vector');
-[D, ind] = sort(D,'descend');
-W = W(:, ind);
-act_scores = sum(diag(D)*W'.^2);
+[W,Lambda,~] = svd(G_f,'econ');
+act_scores = sum(Lambda*W'.^2);
 
 end
 
-%% Now build active subspace
+%% NOTE: to build active subspace, you can transform the parameter 
+% dimensionality to an r<p subspace given by
+% act_subspace = W(:,1:r)'*theta
+% where theta is the original parameters.
+
+
+
 % r = 1;
 % n_train = 500;
 % act_subspace = @(theta) W(:,1:r)'*theta;

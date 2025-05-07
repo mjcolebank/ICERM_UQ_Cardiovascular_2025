@@ -14,12 +14,14 @@ T = param(12);
 load('CV_test_data.mat','data')
 % Starting and ending time
 tstart = 0;
-tend   = 20.*T; % 30 cycles
+tend   = 30.*T; % 30 cycles
 dt = 1e-3;
 tspace = tstart:dt:tend;
-param_base = log(param);
+% param_base = log(param);
+param_base = param;
 %% Run active subspaces depending on the quantity of interest
-f = @(q) act_subspace_f(q,IC,tspace,4,data);
+output_flag = 3;
+f = @(q) act_subspace_f(q,IC,tspace,output_flag,data);
 param_ids = [1:11];%1:11; % Exclude the cardiac cycle length;
 UB = param_base.*1.2;
 LB = param_base.*0.8;
@@ -27,7 +29,7 @@ LB = param_base.*0.8;
 % UB(4) = param(4).*1.05;
 M = 100;
 Ny = 1;
-CS_flag = 0; % Use complex step, otherwise use centered finite difference
+CS_flag = 1; % Use complex step, otherwise use centered finite difference
 parallel_flag=0;
 [G_f,Lambda,W,act_scores] = ActiveSubspace_SVD_Algorithm(f,UB,LB,M,Ny,CS_flag,param_ids,param_base,parallel_flag);
 %%
@@ -48,8 +50,8 @@ set(gca,'FontSize',20);
 
 %% See if we can't find a reduced subset capable of predicting the QoI
 theta0 = param(param_ids)';
-r = 2;
-n_train = 500;
+r = 1;
+n_train = 100;
 act_subspace = @(theta) W(:,1:r)'*theta;
 
 
@@ -57,7 +59,8 @@ x_train = zeros(r,n_train);
 y_train = zeros(1,n_train);
 
 
-lhs_samp = lhsdesign(n_train,length(param_ids));
+% lhs_samp = lhsdesign(n_train,length(param_ids));
+lhs_samp = unifrnd(0,1,n_train,length(param_ids));
 par_train = LB(param_ids)+(UB(param_ids)-LB(param_ids)).*lhs_samp;
 for j=1:n_train
     par_eval = param_base; par_eval(param_ids) = par_train(j,:);
@@ -89,6 +92,14 @@ plot(y_train'-X_poly'*B,'ko');
 title('Residual - Act Subspace Linear Model')
 grid on; set(gca,'FontSize',20);
 
+figure(99);
+for i=1:11
+subplot(3,4,i); ksdensity(abs(G_f(i,:)));
+xlabel(param_names{i});
+grid on; set(gca,'FontSize',20);
+end
+subplot(3,4,2); title('Density of Gradient Values')
+return
 %% Now look at doing MCMC with active subspaces
 param_star = param;
 UB_full = 1.25.*param_star;
@@ -223,16 +234,17 @@ plot(tspace,true_signal,'--k','LineWidth',2)
 legend('MAP','Data','Truth')
 %%
 function out = act_subspace_f(q,IC,tspace,outflag,data)
-param = exp(q);
-% param = q;
+% param = exp(q);
+param = q;
 [output,~] = call_CV_model(IC,param,tspace);
 
 if outflag==1 % systolic LV pressure
     out = max(output.plv);
 elseif outflag==2 %systolic Ao pressure
     out = max(output.pao);
-elseif outflag==3 %diastolic Ao pressure
-    out = min(output.pao);
+elseif outflag==3 %Ao pressure
+    res1 = (data.pao - output.pao)./max(data.pao);
+    out = sum(res1.^2);
 elseif outflag==4 %residual function (assume pressure in the Aorta, aortic and mitral flow
     res1 = (data.pao - output.pao)./max(data.pao);
     res2 = (data.qav - output.qav)./max(data.qav);

@@ -253,3 +253,26 @@ elseif outflag==4 %residual function (assume pressure in the Aorta, aortic and m
 end
 
 end
+
+%%
+function out = act_subspace_MCMC(q,f_subspace,IC,tspace,outflag,data,param_all,param_ids)
+% param = exp(q);
+param = param_all;
+param(param_ids) = q;
+[output,~] = call_CV_model(IC,param,tspace);
+
+if outflag==1 % systolic LV pressure
+    out = max(output.plv);
+elseif outflag==2 %systolic Ao pressure
+    out = max(output.pao);
+elseif outflag==3 %Ao pressure
+    res1 = (data.pao - output.pao)./max(data.pao);
+    out = sum(res1.^2);
+elseif outflag==4 %residual function (assume pressure in the Aorta, aortic and mitral flow
+    res1 = (data.pao - output.pao)./max(data.pao);
+    res2 = (data.qav - output.qav)./max(data.qav);
+    res3 = (data.qmv - output.qmv)./max(data.qmv);
+    out = sum([res1 res2 res3].^2);
+end
+
+end

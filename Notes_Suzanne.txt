@@ -1,0 +1,42 @@
+05/07/2025 — 
+
+Project 0: Contains a variety of code implementations for different methods.
+
+Project 1: Cardiac Code:
+
+Objective:
+Explore and experiment with an ODE (Ordinary Differential Equation) model.
+
+Active Subspace Method
+
+Overview:
+This method maps a set of input parameters (p total) to an output quantity of interest (e.g., a measurement).
+
+- Construct a matrix representing this input-output relationship.
+- Apply Singular Value Decomposition (SVD) to extract dominant directions in the input space.
+- The resulting C matrix is symmetric, meaning it shares dimensions with its eigenbasis—an elegant mathematical feature.
+- The dominant directions identified through this process are known as Active Subspaces.
+- Using the active subspace method often leads to a form of polynomial regression over the reduced subspace.
+
+Open Questions & Thoughts
+
+- Temporal Variation:
+  What happens if the system dynamics change over time?
+  → This could result in different active subspaces at different time points.
+
+- Multiple Time Points:
+  Can we evaluate changes in stability or behavior using tools like the Lyapunov exponent?
+  → Possibly by analyzing the evolution of a sequence of transformation matrices over time.
+
+- Alternative Matrix Analysis:
+  What insights might we gain by analyzing other matrices in the system?
+  → For example, exploring the singular vectors of different components could reveal new structural properties.
+
+** Post Lunch
+
+Spring Problem:
+
+* We are looking at the case that we have multiple important parameters. 
+* Our ACTIVE subspaces have each of the parameters. 
+
+

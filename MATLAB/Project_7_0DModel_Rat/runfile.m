@@ -13,19 +13,20 @@ tshift = -0.04;  % data 1
 %tshift = -0.02;  % data 2
 %tshift = -0.01;  % data 3
 
-D0 = data_process(0,1);  %data stuct w/o shifting (dataset 1, 2, 3)
+%D0 = data_process(0,1);  %data stuct w/o shifting (dataset 1, 2, 3)
 
 % Run with nominal parameters
-data = data_process(tshift,1); %make sure dataprocess#, tshift, and the .mat file loaded in line 19 all correspond to the same data set (1,2, or 3)
-[x0,Init,low,hi] = load_global(data); % returns data set specifc log scaled parameters, 
-pars = exp(x0); %x0 are the nominal parameters
+%data = data_process(tshift,1); %make sure dataprocess#, tshift, and the .mat file loaded in line 19 all correspond to the same data set (1,2, or 3)
+%[x0,Init,low,hi] = load_global(data); % returns data set specifc log scaled parameters, 
+%pars = exp(x0); %x0 are the nominal parameters
 
 % Run with optimized parameters
-%data = data_process(tshift,3); %make sure dataprocess#, tshift, and the .mat file loaded in line 19 all correspond to the same data set (1,2, or 3)
-%load('shift1/shift_-0.04_1.mat', 'x') %optimzatized parameters for data 1
+data = data_process(tshift,1); %make sure dataprocess#, tshift, and the .mat file loaded in line 19 all correspond to the same data set (1,2, or 3)
+load('shift1/shift_-0.04_1.mat', 'x') %optimzatized parameters for data 1
 %load('shift2/shift_-0.02_2.mat', 'x') %optimzatized parameters for data 1
 %load('shift3/shift_-0.01_3.mat', 'x') %optimzatized parameters for data 1
-%pars = exp(x);
+[x0,Init,low,hi] = load_global(data); % returns data set specifc log scaled parameters, 
+pars = exp(x);
 
 
 %Resistances
@@ -195,15 +196,15 @@ qsS  = [qsS   qs(end)'];
 
 figure(1);
 subplot(2,1,1)
-h=plot(data.t(1:10:end),plvS(1:10:end),'b',data.t(1:10:end),data.P(1:10:end),'r',D0.t(1:10:end),D0.P(1:10:end),'k:');
+h=plot(data.t(1:10:end),plvS(1:10:end),'b',data.t(1:10:end),data.P(1:10:end),'r');
 set(h,'Linewidth',2);
 set(gca,'Fontsize',18);
 ylabel('Pressure (mmHg)');
-legend('model', [num2str(tshift),' shift'],'original data')
+legend('model', [num2str(tshift),' shift'])
 xlim([0 1])
 grid on;
 subplot(2,1,2)
-h=plot(data.t(1:10:end),VlvS(1:10:end),'b',data.t(1:10:end),data.V(1:10:end),'r',D0.t(1:10:end),D0.V(1:10:end),'k:');
+h=plot(data.t(1:10:end),VlvS(1:10:end),'b',data.t(1:10:end),data.V(1:10:end),'r');
 set(h,'Linewidth',2);
 set(gca,'Fontsize',18);
 ylabel('Volume (\muL)');

@@ -48,8 +48,11 @@ sp_cov = 2.38.^2 ./ n_par;
 %%
 num_acc = 0;
 
-    prob_acc = unifrnd(0,1,M,1);
+prob_acc = unifrnd(0,1,M,1);
 for i=2:M
+    if mod(i/M*100,10)==0
+        fprintf("%d percent complete.\n",i/M*100)
+    end
     theta_star = chain(:,i-1)+R'*normrnd(0,1,n_par,1);
 
     if sum(any(theta_star(:)>UB(:)))>0 || sum(any(theta_star(:)<LB(:)))>0
@@ -78,12 +81,12 @@ for i=2:M
     s2chain(i) = 1./gamrnd(aval,1./bval);
 
     % Update values of covariance and mean parameter
-    
+
     theta_bar_old = theta_bar;
     theta_bar = (i./(i+1)).*theta_bar_old+chain(:,i)./(i+1);
     Vk = (i-1)*Vk./i + (sp_cov./i).*(i.*theta_bar_old*theta_bar_old' ...
         - (i+1).*theta_bar*theta_bar' + chain(:,i)*chain(:,i)' + Ip);
-    
+
     if mod(i,k0)==0 % update covariance in sampling
         R = chol(Vk);
     end
